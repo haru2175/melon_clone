@@ -1,17 +1,18 @@
-from typing import Optional
-
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView as DjangoLoginView, RedirectURLMixin
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
 from accounts.forms import LoginForm, SignupForm
 from accounts.models import User
 
-# Profile
+
+def is_authenticated(request):
+    return JsonResponse({"is_authenticated": request.user.is_authenticated})
 
 
 class SignupView(RedirectURLMixin, CreateView):
@@ -27,18 +28,18 @@ class SignupView(RedirectURLMixin, CreateView):
         if self.request.user.is_authenticated:
             redirect_to = self.success_url
             if redirect_to != request.path:
-                messages.warning(request, "로그인 유저는 회원가입할 수 없습니다.")
+                messages.warning(request, "로그인 유저는 회원가입을 할 수 없습니다.")
                 return HttpResponseRedirect(redirect_to)
         response = super().dispatch(request, *args, **kwargs)
         return response
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "회원가입을 환영합니다. ;-)")
+        messages.success(self.request, "회원가입을 환영합니다 ! ")
 
         user = self.object
         auth_login(self.request, user)
-        messages.success(self.request, "회원가입과 동시에 로그인 지원 !")
+        messages.success(self.request, "회원가입과 동시에 로그인 지원 ! ")
 
         return response
 
@@ -53,6 +54,11 @@ class LoginView(DjangoLoginView):
     extra_context = {
         "form_title": "로그인",
     }
+
+    def form_valid(self, form):
+        # 사용자 인증에 성공하면 메시지를 추가합니다.
+        messages.success(self.request, "로그인이 되었습니다.")
+        return super().form_valid(form)
 
 
 login = LoginView.as_view()
