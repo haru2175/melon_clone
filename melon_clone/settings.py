@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     # third apps
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_bootstrap5",
     "django_components",
     "django_extensions",
     "django_htmx",

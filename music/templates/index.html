@@ -1,4 +1,4 @@
-{# 경로 : hottrack/templates/hottrack/index.html #}
+{% load django_bootstrap5 %}
 
 <!doctype html>
 <html lang="ko" data-bs-theme="dark">
@@ -41,20 +41,21 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a href="#" class="navbar-brand d-flex align-items-center">
+            <a href="{% url 'music:index' %}" class="navbar-brand d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
                      stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2"
                      viewBox="0 0 24 24">
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                     <circle cx="12" cy="13" r="4"></circle>
                 </svg>
-                <strong>HotTrack</strong>
+                <strong>Home</strong>
             </a>
 
             <form action="" class="col-12 col-lg-4 mb-3 mb-lg-0 me-lg-3">
                 <input type="search" class="form-control form-control-dark text-bg-dark"
-                        placeholder="검색어를 입력해주세요"
-                        name="query" value="{{ query }}"
+                       placeholder="검색어를 입력해주세요"
+                       name="query"
+                       value="{{ request.GET.query }}"
                 />
             </form>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
@@ -99,6 +100,10 @@
                         {% include "_song.html" with song=song only %}
                     </div>
                 {% endfor %}
+            </div>
+
+            <div class="my-5 d-flex justify-content-center large-pagination">
+                {% bootstrap_pagination page_obj %}
             </div>
         </div>
     </div>

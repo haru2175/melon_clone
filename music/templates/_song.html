@@ -1,6 +1,6 @@
-<div class="card shadow-sm">
+<div class="card shadow-sm w-100 mx-auto">
     {# refs: https://picsum.photos/ #}
-    <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="card-img-top" />
+    <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="cart-img-top" />
 
     <div class="card-body">
         <p class="card-text">
@@ -12,9 +12,8 @@
                 <a href="{{ song.youtube_search_url }}" type="button" class="btn btn-sm btn-outline-danger">Youtube</a>
             </div>
             <small class="text-body-secondary">
-                좋아요♥ : {{ song.like_count }}
+                좋아요 ♥ :  {{ song.like_count }}
             </small>
         </div>
     </div>
 </div>
-
