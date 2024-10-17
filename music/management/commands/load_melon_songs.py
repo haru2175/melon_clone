@@ -25,3 +25,6 @@ class Command(BaseCommand):
 
         total = Song.objects.all().count()
         print("saved song_list :", total)
+
+
+# JSON 데이터들을 읽고 그걸 가지고 DB 테이블에 저장
