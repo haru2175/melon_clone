@@ -30,7 +30,7 @@ def main():
     song_list = []
 
     for song_tag in soup.select("#tb_list tbody tr"):
-        id = int(song_tag["data-song-no"])
+        melon_uid = int(song_tag["data-song-no"])
         # 커버이미지_썸네일_주소 = song_tag.select_one('img')['src']
         name = song_tag.select_one("a[href*=playSong]").text
 
@@ -43,7 +43,7 @@ def main():
         album_name = album_tag["title"]
         rank = song_tag.select_one(".rank").text
 
-        song_detail_url = f"https://www.melon.com/song/detail.htm?songId={id}"
+        song_detail_url = f"https://www.melon.com/song/detail.htm?songId={melon_uid}"
         song_headers = dict(BASE_HEADERS, Referer=CHART_URL)
         song_html = requests.get(song_detail_url, headers=song_headers).text
         song_soup = BeautifulSoup(song_html, "html.parser")
@@ -70,7 +70,7 @@ def main():
             lyrics = ""
 
         song = {
-            "id": id,
+            "melon_uid": melon_uid,
             "rank": rank,
             "name": name,
             "artist_uid": artist_uid,
@@ -96,7 +96,7 @@ def main():
         song_list,
         columns=[
             "rank",
-            "id",
+            "melon_uid",
             "album_uid",
             "album_name",
             "name",
@@ -107,7 +107,7 @@ def main():
             "장르",
             "발매일",
         ],
-    ).set_index("id")
+    ).set_index("melon_uid")
 
     # song_df의 인덱스가 노래 id 목록입니다.
     song_id_list = song_df.index
