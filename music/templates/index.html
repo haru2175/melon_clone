@@ -97,7 +97,7 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 {% for song in song_list %}
                     <div class="col">
-                        {% include "_song.html" with song=song only %}
+                        {% include "_song.html" with song=song user=user only %}
                     </div>
                 {% endfor %}
             </div>
