@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     # local apps
     "accounts",
     "music",
+    "playlist",
 ]
 
 if DEBUG:

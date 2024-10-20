@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>내 플레이리스트</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.14.0/css/all.min.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .wrapper {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cccccc;
+            padding-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: #e0e0e0;
+        }
+
+        .main-song {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .main-song__cover {
+            width: 75px;
+            height: 75px;  /* 이미지 크기 줄임 */
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+
+        .main-song__data {
+            flex-grow: 1;
+        }
+
+        .btns {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btns__btn {
+            background-color: #444;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .song-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .song-list__song {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .song-list__cover {
+            width: 40px;
+            height: 40px;  /* 리스트 이미지 크기 줄임 */
+            background-color: #333;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .song-list__data {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <a href="{% url 'music:root' %}">
+            <i class="fas fa-times" style="color: #cccccc"></i>
+        </a>
+        <h1>내 플레이리스트</h1>
+    </header>
+    <main>
+        <section class="main-song">
+            <div class="main-song__cover">
+               <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="cart-img-top" style="width: 100%; height: 100%; object-fit: cover;"/>
+            </div>
+            <div class="main-song__data">
+                <h3 class="main-song__title">{{ song.name }}</h3>
+                <h5 class="main-song__author">By Lynn</h5>
+            </div>
+        </section>
+        <section class="btns">
+                <span class="btns__btn btns__btn--big">
+                    <i class="fas fa-play"></i>
+                    <span>재생</span>
+                </span>
+            <span class="btns__btn"><i class="fas fa-heart"></i></span>
+            <span class="btns__btn"><i class="fas fa-plus"></i></span>
+        </section>
+        <ul class="song-list">
+            <li class="song-list__song">
+                <div class="song-list__cover"></div>
+                <div class="song-list__data">
+                    <h5>Corona Sucks</h5>
+                    <h6>니꼬</h6>
+                </div>
+            </li>
+            <li class="song-list__song">
+                <div class="song-list__cover"></div>
+                <div class="song-list__data">
+                    <h5>Another Song</h5>
+                    <h6>아티스트</h6>
+                </div>
+            </li>
+            <li class="song-list__song">
+                <div class="song-list__cover"></div>
+                <div class="song-list__data">
+                    <h5>More Music</h5>
+                    <h6>아티스트</h6>
+                </div>
+            </li>
+        </ul>
+    </main>
+</div>
+</body>
+</html>
