@@ -5,4 +5,5 @@ app_name = "playlist"
 
 urlpatterns = [
     path("create_playlist/", views.create_playlist, name="create_playlist"),
+    path("song/<int:song_id>/", views.show_song, name="show_song"),
 ]

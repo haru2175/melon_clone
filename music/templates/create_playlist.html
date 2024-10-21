@@ -40,7 +40,7 @@
 
         .main-song__cover {
             width: 75px;
-            height: 75px;  /* 이미지 크기 줄임 */
+            height: 75px;
             background-color: #333;
             display: flex;
             justify-content: center;
@@ -80,11 +80,12 @@
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #444;
+            cursor: pointer;
         }
 
         .song-list__cover {
             width: 40px;
-            height: 40px;  /* 리스트 이미지 크기 줄임 */
+            height: 40px;
             background-color: #333;
             border-radius: 5px;
             margin-right: 10px;
@@ -93,7 +94,92 @@
         .song-list__data {
             flex-grow: 1;
         }
+
+        /* 선택된 곡 정보를 보여주는 섹션 */
+        .selected-song {
+            margin-top: 20px;
+            display: none;
+            align-items: center; /* 추가 */
+        }
+
+        .selected-song__cover {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+
+        .song-list__song:hover {
+            background-color: #31d2f2; /* 마우스를 올렸을 때의 배경 색상 */
+        }
+
+        .song-list__song.active {
+            background-color: #31d2f2; /* 클릭된 곡의 배경 색상 */
+        }
     </style>
+    <script>
+        let currentSong = {}; // 현재 선택된 곡 정보를 저장할 변수
+
+        let isSongAdded = false; // 곡이 추가되었는지를 추적하는 변수
+
+        // 곡을 클릭했을 때 곡 정보 표시
+        function showSongInfo(song,element) {
+
+            const songItems = document.querySelectorAll('.song-list__song');
+            songItems.forEach(item => item.classList.remove('active')) // 모든 곡에서 active 클래스 제거
+
+            element.classList.add('active'); // 클릭된 곡에 active 클래스 추가
+
+            const selectedSongDiv = document.querySelector('.selected-song');
+            const selectedCover = selectedSongDiv.querySelector('.selected-song__cover');
+            const selectedTitle = selectedSongDiv.querySelector('.selected-song__title');
+            const selectedArtist = selectedSongDiv.querySelector('.selected-song__artist');
+
+
+            // 클릭된 곡의 active 클래스 추가
+
+            // 선택된 곡의 정보 설정
+            selectedCover.src = song.cover_url; // cover_url을 src에 설정
+            selectedTitle.textContent = song.name; // 곡 이름 설정
+            selectedArtist.textContent = song.artist_name; // 아티스트 이름 설정
+
+            // 선택된 곡 정보 섹션 보이기
+            selectedSongDiv.style.display = 'flex';
+
+            currentSong = song; // song을 객채화 시킨거.
+        }
+
+        function playSong() {
+            if (currentSong.name) {
+                alert(currentSong.name + " 곡이 재생됩니다 !");
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+
+        function addToPlaylist() {
+            if (currentSong.name) {
+                if (isSongAdded) {
+                    alert(currentSong.name + " 라는 곡이 있습니다.");
+                } else
+                    alert("[" + currentSong.name + "] 곡을 추가하였습니다.");
+
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+
+        function deleteSong() {
+            alert(currentSong.name + " 곡이 삭제 되었습니다.")
+        }
+
+        function likeSong() {
+            if (currentSong.name) {
+                alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다.");
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="wrapper">
@@ -104,45 +190,53 @@
         <h1>내 플레이리스트</h1>
     </header>
     <main>
-        <section class="main-song">
-            <div class="main-song__cover">
-               <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="cart-img-top" style="width: 100%; height: 100%; object-fit: cover;"/>
+        <!-- 선택된 곡 데이터 섹션 -->
+        <div class="selected-song" style="display: none;">
+            <img src="" alt="" class="selected-song__cover" style="width: 30%; height: 30%; object-fit: cover;"/>
+            <div class="selected-song__data">
+                <h3 class="selected-song__title"></h3>
+                <h5 class="selected-song__artist"></h5>
             </div>
-            <div class="main-song__data">
-                <h3 class="main-song__title">{{ song.name }}</h3>
-                <h5 class="main-song__author">By Lynn</h5>
-            </div>
-        </section>
+        </div>
+
+        <!-- 버튼 섹션 -->
         <section class="btns">
-                <span class="btns__btn btns__btn--big">
-                    <i class="fas fa-play"></i>
-                    <span>재생</span>
-                </span>
-            <span class="btns__btn"><i class="fas fa-heart"></i></span>
-            <span class="btns__btn"><i class="fas fa-plus"></i></span>
+            <span class="btns__btn" onclick="playSong()">
+                <i class="fas fa-play"></i>
+                <span>재생</span>
+            </span>
+            <span class="btns__btn" onclick="likeSong()">
+                <i class="fas fa-heart"></i>
+                <span>좋아요</span>
+            </span>
+            <span class="btns__btn" onclick="addToPlaylist()">
+                <i class="fas fa-plus"></i>
+                <span>추가</span>
+            </span>
+            <span class="btns__btn" onclick="deleteSong()">
+                <i class="fas fa-trash"></i>
+                <span>삭제</span>
+            </span>
         </section>
+
+        <!-- 노래 리스트 -->
         <ul class="song-list">
-            <li class="song-list__song">
-                <div class="song-list__cover"></div>
-                <div class="song-list__data">
-                    <h5>Corona Sucks</h5>
-                    <h6>니꼬</h6>
-                </div>
-            </li>
-            <li class="song-list__song">
-                <div class="song-list__cover"></div>
-                <div class="song-list__data">
-                    <h5>Another Song</h5>
-                    <h6>아티스트</h6>
-                </div>
-            </li>
-            <li class="song-list__song">
-                <div class="song-list__cover"></div>
-                <div class="song-list__data">
-                    <h5>More Music</h5>
-                    <h6>아티스트</h6>
-                </div>
-            </li>
+            {% for song in songs %}
+                <li class="song-list__song" onclick="showSongInfo({
+                        cover_url: '{{ song.cover_url|escapejs }}',
+                        name: '{{ song.name|escapejs }}',
+                        artist_name: '{{ song.artist_name|escapejs }}'
+                        },this)">
+                    <div class="song-list__cover">
+                        <img src="{{ song.cover_url }}" alt="{{ song.name }}"
+                             style="width: 100%; height: 100%; object-fit: cover;"/>
+                    </div>
+                    <div class="song-list__data">
+                        <h5>{{ song.name }}</h5>
+                        <h6>{{ song.artist_name }}</h6>
+                    </div>
+                </li>
+            {% endfor %}
         </ul>
     </main>
 </div>

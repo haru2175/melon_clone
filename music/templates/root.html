@@ -61,11 +61,26 @@
                     <strong>게시판</strong>
                 </a>
             </div>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
-                    aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="d-flex align-items-center">
+                <div class="text-end">
+                    {% if not user.is_authenticated %}
+                        {% url 'accounts:login' as login_url %}
+                        <a href="{{ login_url }}{% if login_url != request.path %}?next={{ request.path }}{% endif %}"
+                           class="btn btn-outline-light me-3">로그인</a>
+                        <a href="{% url 'accounts:signup' %}?next={{ request.path }}"
+                           class="btn btn-outline-light me-3">회원가입</a>
+                    {% else %}
+                        <a href="{% url 'accounts:logout' %}?next={{ request.path }}"
+                           hx-target="body"
+                           hx-push-url="true"
+                           class="btn btn-outline-light me-3">로그아웃</a>
+                    {% endif %}
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
+                        aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
         </div>
     </div>
 </header>

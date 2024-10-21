@@ -16,30 +16,36 @@
 <header class="p-3 text-bg-dark">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                Home
+            <a href="{% url 'music:root' %}"
+               class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                     stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2"
+                     viewBox="0 0 24 24">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <strong>Home</strong>
             </a>
-
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="{% url 'music:index' %}" class="nav-link px-2 text-white">인기차트</a></li>
+                <li><a href="{% url 'playlist:create_playlist' %}" class="nav-link px-2 text-white">플레이 리스트</a></li>
+                <li><a href="#" class="nav-link px-2 text-white">게시판</a></li>
             </ul>
-
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
                 <input type="search"
                        class="form-control form-control-dark text-bg-dark"
                        placeholder="Search..."
                        aria-label="Search">
             </form>
-
             <div class="text-end">
                 {% if not user.is_authenticated %}
                     {% url 'accounts:login' as login_url %}
-                    <a href="{{ login_url }}{% if login_url != request.path %}?next={{ request.path}}{% endif %}"
+                    <a href="{{ login_url }}{% if login_url != request.path %}?next={{ request.path }}{% endif %}"
                        class="btn btn-outline-light me-2">로그인</a>
                     <a href="{% url 'accounts:signup' %}?next={{ request.path }}"
-                       class="btn btn-warning">회원가입</a>
+                       class="btn btn-outline-light me-2">회원가입</a>
                 {% else %}
-                    <a hx-post="{% url 'accounts:logout' %}?next={{ request.path}}"
+                    <a hx-post="{% url 'accounts:logout' %}?next={{ request.path }}"
                        hx-target="body"
                        hx-push-url="true"
                        class="btn btn-warning">로그아웃</a>
@@ -56,9 +62,7 @@
 </main>
 
 <footer class="text-body-secondary py-5">
-    <div class="container">
-         개인 프로젝트
-    </div>
+
 </footer>
 
 {% if debug %}

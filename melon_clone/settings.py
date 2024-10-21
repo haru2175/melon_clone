@@ -132,7 +132,6 @@ DATABASES = {
     "default": env.db(default=DEFAULT_DATABASE_URL),
 }
 
-
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
 
