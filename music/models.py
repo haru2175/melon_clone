@@ -4,6 +4,7 @@ from datetime import date
 from typing import Dict
 from urllib.parse import quote
 
+from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -44,3 +45,19 @@ class Song(models.Model):
             release_date=date.fromisoformat(data.get("발매일")),
             like_count=int(data.get("좋아요")),
         )
+
+
+User = get_user_model()  # 현재 사용 중인 사용자 모델 가져오기
+
+
+class Playlist(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="playlists"
+    )  # 사용자와의 관계
+    name = models.CharField(max_length=100)  # 플레이리스트 이름
+    songs = models.ManyToManyField(
+        "music.Song", related_name="playlists"
+    )  # Song 모델과 다대다 관계
+
+    def __str__(self):
+        return self.name

@@ -95,11 +95,10 @@
             flex-grow: 1;
         }
 
-        /* 선택된 곡 정보를 보여주는 섹션 */
         .selected-song {
             margin-top: 20px;
             display: none;
-            align-items: center; /* 추가 */
+            align-items: center;
         }
 
         .selected-song__cover {
@@ -109,48 +108,39 @@
         }
 
         .song-list__song:hover {
-            background-color: #31d2f2; /* 마우스를 올렸을 때의 배경 색상 */
+            background-color: #31d2f2;
         }
 
         .song-list__song.active {
-            background-color: #31d2f2; /* 클릭된 곡의 배경 색상 */
+            background-color: #31d2f2;
         }
     </style>
     <script>
-        let currentSong = {}; // 현재 선택된 곡 정보를 저장할 변수
+        let currentSong = {};
+        let isSongAdded = false;
 
-        let isSongAdded = false; // 곡이 추가되었는지를 추적하는 변수
-
-        // 곡을 클릭했을 때 곡 정보 표시
-        function showSongInfo(song,element) {
-
+        function showSongInfo(song, element) {
             const songItems = document.querySelectorAll('.song-list__song');
-            songItems.forEach(item => item.classList.remove('active')) // 모든 곡에서 active 클래스 제거
-
-            element.classList.add('active'); // 클릭된 곡에 active 클래스 추가
+            songItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
 
             const selectedSongDiv = document.querySelector('.selected-song');
             const selectedCover = selectedSongDiv.querySelector('.selected-song__cover');
             const selectedTitle = selectedSongDiv.querySelector('.selected-song__title');
             const selectedArtist = selectedSongDiv.querySelector('.selected-song__artist');
 
+            selectedCover.src = song.cover_url;
+            selectedTitle.textContent = song.name;
+            selectedArtist.textContent = song.artist_name;
 
-            // 클릭된 곡의 active 클래스 추가
-
-            // 선택된 곡의 정보 설정
-            selectedCover.src = song.cover_url; // cover_url을 src에 설정
-            selectedTitle.textContent = song.name; // 곡 이름 설정
-            selectedArtist.textContent = song.artist_name; // 아티스트 이름 설정
-
-            // 선택된 곡 정보 섹션 보이기
             selectedSongDiv.style.display = 'flex';
-
-            currentSong = song; // song을 객채화 시킨거.
+            currentSong = song; // song 객체화
+            {#currentSong = song.id; // ID#}
         }
 
         function playSong() {
             if (currentSong.name) {
-                alert(currentSong.name + " 곡이 재생됩니다 !");
+                alert(currentSong.name + " 곡이 재생됩니다!");
             } else {
                 alert("곡이 선택되지 않았습니다!");
             }
@@ -158,26 +148,102 @@
 
         function addToPlaylist() {
             if (currentSong.name) {
-                if (isSongAdded) {
-                    alert(currentSong.name + " 라는 곡이 있습니다.");
-                } else
-                    alert("[" + currentSong.name + "] 곡을 추가하였습니다.");
+                const playlistId = document.getElementById('playlistSelect').value;
+                const addSongUrl = "{% url 'playlist:addToPlaylist' %}";
 
+                console.log('Sending to add_to_playlist:', {playlist_id: playlistId, song_id: currentSong.id});
+
+
+                fetch(addSongUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({playlistId:playlistId,song_id: currentSong.id})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert("[" + currentSong.name + "] 곡이 추가되었습니다.");
+                        isSongAdded = true;
+                    } else {
+                        alert("곡 추가에 실패했습니다!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             } else {
                 alert("곡이 선택되지 않았습니다!");
             }
         }
 
         function deleteSong() {
-            alert(currentSong.name + " 곡이 삭제 되었습니다.")
+            if (currentSong.name) {
+                const playlistId = document.getElementById('playlistSelect').value;
+
+                fetch('/playlist/remove_song/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({playlistId: playlistId,song_id: currentSong.id})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(currentSong.name + " 곡이 삭제되었습니다.");
+                        isSongAdded = false;
+                        currentSong = {};
+                        document.querySelector('.selected-song').style.display = 'none';
+                    } else {
+                        alert("곡 삭제에 실패했습니다!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
         }
 
         function likeSong() {
             if (currentSong.name) {
-                alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다.");
+                fetch('/playlist/like_song/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({song_id: currentSong.id})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
+                    } else {
+                        alert("좋아요 기능에 실패했습니다!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             } else {
                 alert("곡이 선택되지 않았습니다!");
             }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Check if this cookie string begins with the name we want
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
     </script>
 </head>
@@ -197,6 +263,16 @@
                 <h3 class="selected-song__title"></h3>
                 <h5 class="selected-song__artist"></h5>
             </div>
+        </div>
+
+        <!-- 플레이리스트 선택 -->
+        <div>
+            <label for="playlistSelect">플레이리스트 선택:</label>
+            <select id="playlistSelect">
+                {% for playlist in playlists %}
+                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <!-- 버튼 섹션 -->
@@ -223,10 +299,11 @@
         <ul class="song-list">
             {% for song in songs %}
                 <li class="song-list__song" onclick="showSongInfo({
+                        id: '{{ song.id }}',
                         cover_url: '{{ song.cover_url|escapejs }}',
                         name: '{{ song.name|escapejs }}',
                         artist_name: '{{ song.artist_name|escapejs }}'
-                        },this)">
+                        }, this)">
                     <div class="song-list__cover">
                         <img src="{{ song.cover_url }}" alt="{{ song.name }}"
                              style="width: 100%; height: 100%; object-fit: cover;"/>
