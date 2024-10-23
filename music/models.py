@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.conf import settings
 
 
 # models.Model 상속
@@ -52,12 +53,14 @@ User = get_user_model()  # 현재 사용 중인 사용자 모델 가져오기
 
 class Playlist(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="playlists"
-    )  # 사용자와의 관계
-    name = models.CharField(max_length=100)  # 플레이리스트 이름
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="music_playlists",
+    )  # 변경된 related_name
+    name = models.CharField(max_length=100)
     songs = models.ManyToManyField(
-        "music.Song", related_name="playlists"
-    )  # Song 모델과 다대다 관계
+        "Song", related_name="music_playlist_songs"
+    )  # 변경된 related_name
 
     def __str__(self):
         return self.name

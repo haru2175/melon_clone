@@ -148,59 +148,49 @@
 
         function addToPlaylist() {
             if (currentSong.name) {
-                const playlistId = document.getElementById('playlistSelect').value;
-                const addSongUrl = "{% url 'playlist:addToPlaylist' %}";
+                const playlist_id = document.getElementById('playlistSelect').value;
 
-                console.log('Sending to add_to_playlist:', {playlist_id: playlistId, song_id: currentSong.id});
+                if (!playlist_id) {
+                    alert("플레이리스트가 선택되지 않았습니다!");
+                    return;
+                }
 
+                console.log('Sending to add_to_playlist:', {playlist_id: playlist_id, song_id: currentSong.id});
 
-                fetch(addSongUrl, {
+                fetch('/playlist/add_song/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
-                    body: JSON.stringify({playlistId:playlistId,song_id: currentSong.id})
+                    body: JSON.stringify({playlist_id: playlist_id, song_id: currentSong.id})
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert("[" + currentSong.name + "] 곡이 추가되었습니다.");
-                        isSongAdded = true;
-                    } else {
-                        alert("곡 추가에 실패했습니다!");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            } else {
-                alert("곡이 선택되지 않았습니다!");
-            }
-        }
-
-        function deleteSong() {
-            if (currentSong.name) {
-                const playlistId = document.getElementById('playlistSelect').value;
-
-                fetch('/playlist/remove_song/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({playlistId: playlistId,song_id: currentSong.id})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(currentSong.name + " 곡이 삭제되었습니다.");
-                        isSongAdded = false;
-                        currentSong = {};
-                        document.querySelector('.selected-song').style.display = 'none';
-                    } else {
-                        alert("곡 삭제에 실패했습니다!");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => {
+                        console.log("Response status:", response.status);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(text);
+                            });
+                        }
+                        return response.json(); // JSON 응답을 반환
+                    })
+                    .then(data => {
+                        console.log("Response data:", data); // 여기에 데이터 로그
+                        if (data) {
+                            if (data.status === 'success') { // 곡 추가 성공
+                                alert("[" + currentSong.name + "] 곡이 추가되었습니다.");
+                                isSongAdded = true;
+                            } else {
+                                alert("해당 곡은 이미 추가되어 있습니다.!");
+                            }
+                        } else {
+                            alert("곡 추가에 실패했습니다!");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("오류가 발생했습니다: " + error.message);
+                    });
             } else {
                 alert("곡이 선택되지 않았습니다!");
             }
@@ -216,15 +206,15 @@
                     },
                     body: JSON.stringify({song_id: currentSong.id})
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
-                    } else {
-                        alert("좋아요 기능에 실패했습니다!");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
+                        } else {
+                            alert("좋아요 기능에 실패했습니다!");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             } else {
                 alert("곡이 선택되지 않았습니다!");
             }
@@ -248,12 +238,13 @@
     </script>
 </head>
 <body>
+{% csrf_token %}
 <div class="wrapper">
     <header>
         <a href="{% url 'music:root' %}">
             <i class="fas fa-times" style="color: #cccccc"></i>
         </a>
-        <h1>내 플레이리스트</h1>
+        <h1>노래 리스트</h1>
     </header>
     <main>
         <!-- 선택된 곡 데이터 섹션 -->
@@ -269,9 +260,13 @@
         <div>
             <label for="playlistSelect">플레이리스트 선택:</label>
             <select id="playlistSelect">
-                {% for playlist in playlists %}
-                    <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                {% endfor %}
+                {% if playlists %}
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">플레이리스트가 없습니다.</option>
+                {% endif %}
             </select>
         </div>
 

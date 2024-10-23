@@ -1,4 +1,6 @@
 import json
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from music.models import Song
@@ -27,18 +29,37 @@ def show_song(request, song_id):
 
 
 # 노래 추가
+@login_required  # 사용자 로그인 필수
 def addToPlaylist(request):
     if request.method == "POST":
         data = json.loads(request.body)
         playlist_id = data.get("playlist_id")
         song_id = data.get("song_id")
 
-        playlist = get_object_or_404(Playlist, id=playlist_id)
+        user = request.user
+
+        # 플레이리스트와 곡을 가져오기
+        playlist = get_object_or_404(Playlist, id=playlist_id, user=user)
         song = get_object_or_404(Song, id=song_id)
 
-        playlist.songs.add(song)  # 플레이리스트에 노래 추가
-        return JsonResponse({"status": "success"})
-    return JsonResponse({"status": "failed"}, status=400)
+        # 디버깅: playlist와 song의 ID 로그 출력
+        print(f"User: {user}, Playlist ID: {playlist_id}, Song ID: {song_id}")
+
+        # 플레이리스트에 곡이 이미 있는지 확인
+        if playlist.songs.filter(id=song.id).exists():
+            return JsonResponse(
+                {"status": "error", "message": "해당 곡은 이미 추가되어 있습니다."}
+            )
+
+        # 플레이리스트에 곡 추가
+        playlist.songs.add(song)
+
+        # 성공 로그 추가
+        print(f"Added song: {song.name} to playlist: {playlist.name}")
+
+        return JsonResponse({"status": "success"})  # 성공 시 JSON 응답 반환
+
+    return JsonResponse({"status": "failed"}, status=400)  # 실패 시 JSON 응답 반환
 
 
 # 노래 삭제
