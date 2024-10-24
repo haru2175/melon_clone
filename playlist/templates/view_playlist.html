@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ playlist.name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.14.0/css/all.min.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .wrapper {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cccccc;
+            padding-bottom: 10px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: #e0e0e0;
+        }
+
+        .song-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .song-list__song {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+            justify-content: space-between;
+        }
+
+        .song-list__cover {
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .song-list__data {
+            flex-grow: 1;
+        }
+
+        .btns {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btns__btn {
+            background-color: #444;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .song-list__song:hover {
+            background-color: #31d2f2;
+        }
+
+        .song-list__song.active {
+            background-color: #31d2f2; /* 클릭한 곡의 배경 색상 */
+            color: #000; /* 텍스트 색상 */
+        }
+    </style>
+    <script>
+        let currentSong = {};
+
+        function showSongInfo(song, element) {
+            const songItems = document.querySelectorAll('.song-list__song');
+            songItems.forEach(item => item.classList.remove('active')); // 모든 항목에서 'active' 클래스 제거
+            element.classList.add('active'); // 선택된 항목에 'active' 클래스 추가
+
+            currentSong = song; // 곡 정보 저장
+        }
+
+        function playSong() {
+            if (currentSong.name) {
+                alert(currentSong.name + " 곡이 재생됩니다!");
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+
+
+        function removeSongFromPlaylist(songId) {
+            fetch('/playlist/remove_song/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({playlist_id: '{{ playlist.id }}', song_id: songId})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert("곡이 삭제되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("곡 삭제에 실패했습니다!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function likeSong() {
+            if (currentSong.name) {
+                fetch('/playlist/like_song/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({song_id: currentSong.id})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
+                        } else {
+                            alert("좋아요 기능에 실패했습니다!");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+
+        function goBack() {
+            window.location.href = "{% url 'playlist:create_playlist' %}"; // Replace with your actual URL
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <span class="btns__btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            <span>뒤로 가기</span>
+            </span>
+        <h1>{{ playlist.name }}</h1>
+    </header>
+
+    <main>
+        <ul class="song-list">
+            {% for song in playlist.songs.all %}
+                <li class="song-list__song" onclick="showSongInfo({
+                        id: '{{ song.id }}',
+                        cover_url: '{{ song.cover_url|escapejs }}',
+                        name: '{{ song.name|escapejs }}',
+                        artist_name: '{{ song.artist_name|escapejs }}'
+                        }, this)">
+                    <div class="song-list__cover">
+                        <img src="{{ song.cover_url }}" alt="{{ song.name }}"
+                             style="width: 100%; height: 100%; object-fit: cover;"/>
+                    </div>
+                    <div class="song-list__data">
+                        <h5>{{ song.name }}</h5>
+                        <h6>{{ song.artist_name }}</h6>
+                    </div>
+                    <button onclick="removeSongFromPlaylist('{{ song.id }}')"
+                            style="background: none; border: none; color: red; cursor: pointer;">
+                        <i class="fas fa-times"></i> <!-- Font Awesome X 아이콘 -->
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <section class="btns">
+            <span class="btns__btn" onclick="playSong()">
+                <i class="fas fa-play"></i>
+                <span>재생</span>
+            </span>
+            <span class="btns__btn" onclick="likeSong()">
+                <i class="fas fa-heart"></i>
+                <span>좋아요</span>
+            </span>
+
+        </section>
+    </main>
+</div>
+</body>
+</html>
