@@ -55,11 +55,11 @@ class Playlist(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="music_playlists",
+        related_name="playlists",
     )  # 변경된 related_name
     name = models.CharField(max_length=100)
     songs = models.ManyToManyField(
-        "Song", related_name="music_playlist_songs"
+        "Song", related_name="playlist_songs"
     )  # 변경된 related_name
 
     def __str__(self):

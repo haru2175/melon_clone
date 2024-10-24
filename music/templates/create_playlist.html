@@ -196,6 +196,46 @@
             }
         }
 
+        function removeSongFromPlaylist() {
+            if (currentSong.name) {
+                const playlist_id = document.getElementById('playlistSelect').value;
+
+                if (!playlist_id) {
+                    alert("플레이리스트가 선택되지 않았습니다!");
+                    return;
+                }
+                fetch('/playlist/remove_song/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({playlist_id: playlist_id, song_id: currentSong.id}) // song_id를 여기서 사용
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData  => {
+                                throw new Error(errorData.message || "오류가 발생했습니다.");
+                            });
+                        }
+                        return response.json(); // JSON 응답을 반환
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert("곡이 삭제되었습니다.");
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("오류가 발생했습니다: " + error.message);
+                    });
+            } else {
+                alert("곡이 선택되지 않았습니다!");
+            }
+        }
+
         function likeSong() {
             if (currentSong.name) {
                 fetch('/playlist/like_song/', {
@@ -219,6 +259,7 @@
                 alert("곡이 선택되지 않았습니다!");
             }
         }
+
 
         function getCookie(name) {
             let cookieValue = null;
@@ -284,10 +325,15 @@
                 <i class="fas fa-plus"></i>
                 <span>추가</span>
             </span>
-            <span class="btns__btn" onclick="deleteSong()">
-                <i class="fas fa-trash"></i>
-                <span>삭제</span>
+            <span class="btns__btn" onclick="removeSongFromPlaylist('{{ song_id }}')">
+                 <i class="fas fa-trash"></i>
+                 <span>삭제</span>
             </span>
+            {#            <a href="{% url 'playlist:view_playlist' playlist.id %}" class="btns__btn"#}
+            {#               style="text-decoration: none; color: #ffffff;">#}
+            {#                <i class="fas fa-eye"></i>#}
+            {#                <span>플레이리스트 보기</span>#}
+            {#            </a>#}
         </section>
 
         <!-- 노래 리스트 -->
