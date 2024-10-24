@@ -8,112 +8,139 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.14.0/css/all.min.css"/>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: Arial, sans-serif; /* 본문 텍스트의 글꼴을 Arial로 설정, 대체 글꼴로 sans-serif 사용 */
+            background-color: #121212; /* 배경색을 어두운 회색으로 설정 */
+            color: #ffffff; /* 기본 텍스트 색상을 흰색으로 설정 */
         }
 
         .wrapper {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
+            max-width: 800px; /* 최대 너비를 800px로 제한 */
+            margin: auto; /* 수평 중앙 정렬 */
+            padding: 20px; /* 안쪽 여백 20px 추가 */
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #cccccc;
-            padding-bottom: 10px;
+            display: flex; /* Flexbox 레이아웃을 사용하여 아이템 정렬 */
+            justify-content: space-between; /* 자식 요소들을 양 끝에 배치 */
+            align-items: center; /* 수직 중앙 정렬 */
+            border-bottom: 1px solid #cccccc; /* 아래쪽에 연한 회색 테두리 추가 */
+            padding-bottom: 10px; /* 아래쪽 여백 10px 추가 */
         }
 
         header h1 {
-            font-size: 24px;
-            color: #e0e0e0;
+            font-size: 24px; /* 제목 글꼴 크기 설정 */
+            color: #e0e0e0; /* 제목 색상을 연한 회색으로 설정 */
         }
 
         .main-song {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
+            display: flex; /* Flexbox를 사용하여 수평 정렬 */
+            align-items: center; /* 아이템을 수직으로 중앙 정렬 */
+            margin: 20px 0; /* 위아래 마진을 20px로 설정 */
         }
 
         .main-song__cover {
-            width: 75px;
-            height: 75px;
-            background-color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            margin-right: 20px;
+            width: 75px; /* 커버 이미지의 너비 설정 */
+            height: 75px; /* 커버 이미지의 높이 설정 */
+            background-color: #333; /* 커버의 배경색을 어두운 회색으로 설정 */
+            display: flex; /* Flexbox 사용 */
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+            border-radius: 10px; /* 모서리를 둥글게 설정 */
+            margin-right: 20px; /* 오른쪽 마진 20px 추가 */
         }
 
         .main-song__data {
-            flex-grow: 1;
+            flex-grow: 1; /* 남은 공간을 채우도록 설정 */
         }
 
         .btns {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
+            margin: 20px 0; /* 위아래 마진 20px 추가 */
+            display: flex; /* Flexbox 사용 */
+            gap: 10px; /* 버튼들 간의 간격을 10px로 설정 */
         }
 
         .btns__btn {
-            background-color: #444;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            background-color: #444; /* 버튼 배경색 설정 */
+            color: #ffffff; /* 버튼 텍스트 색상 설정 */
+            padding: 10px 15px; /* 안쪽 여백 설정 (상하: 10px, 좌우: 15px) */
+            border-radius: 5px; /* 버튼 모서리를 둥글게 설정 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 수직 중앙 정렬 */
+            gap: 5px; /* 버튼 아이콘과 텍스트 간의 간격을 5px로 설정 */
+            font-size: 14px; /* 버튼 텍스트 크기 설정 */
         }
 
         .song-list {
-            list-style: none;
-            padding: 0;
+            list-style: none; /* 기본 리스트 스타일 제거 */
+            padding: 0; /* 안쪽 여백 제거 */
         }
 
         .song-list__song {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #444;
-            cursor: pointer;
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 수직 중앙 정렬 */
+            padding: 10px; /* 안쪽 여백 설정 */
+            border-bottom: 1px solid #444; /* 아래쪽에 어두운 회색 테두리 추가 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
         }
 
         .song-list__cover {
-            width: 40px;
-            height: 40px;
-            background-color: #333;
-            border-radius: 5px;
-            margin-right: 10px;
+            width: 40px; /* 커버 이미지의 너비 설정 */
+            height: 40px; /* 커버 이미지의 높이 설정 */
+            background-color: #333; /* 커버의 배경색을 어두운 회색으로 설정 */
+            border-radius: 5px; /* 모서리를 둥글게 설정 */
+            margin-right: 10px; /* 오른쪽 마진 10px 추가 */
         }
 
         .song-list__data {
-            flex-grow: 1;
+            flex-grow: 1; /* 남은 공간을 채우도록 설정 */
         }
 
         .selected-song {
-            margin-top: 20px;
-            display: none;
-            align-items: center;
+            margin-top: 20px; /* 위쪽 마진 20px 추가 */
+            display: none; /* 기본적으로 숨김 */
+            align-items: center; /* 수직 중앙 정렬 */
         }
 
         .selected-song__cover {
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
+            width: 100px; /* 커버 이미지의 너비 설정 */
+            height: 100px; /* 커버 이미지의 높이 설정 */
+            margin-right: 20px; /* 오른쪽 마진 20px 추가 */
         }
 
         .song-list__song:hover {
-            background-color: #31d2f2;
+            background-color: #31d2f2; /* 마우스를 올렸을 때 배경색 변경 */
         }
 
         .song-list__song.active {
-            background-color: #31d2f2;
+            background-color: #31d2f2; /* 활성화된 노래의 배경색 설정 */
         }
+
+        /* 플레이리스트 선택 창 스타일 */
+        #playlistSelect {
+            width: 100%; /* 전체 폭 사용 */
+            padding: 10px; /* 안쪽 여백 추가 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            border: 1px solid #444; /* 테두리 색상 설정 */
+            background-color: #333; /* 배경 색상 설정 */
+            color: #ffffff; /* 텍스트 색상 설정 */
+            font-size: 16px; /* 글자 크기 설정 */
+            appearance: none; /* 기본 드롭다운 화살표 제거 */
+            background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"%3E%3Cpath fill="%23ffffff" d="M5 7L2 4h6z"/%3E%3C/svg%3E'); /* 커스텀 화살표 */
+            background-repeat: no-repeat; /* 배경 반복하지 않음 */
+            background-position: right 10px center; /* 오른쪽에 화살표 위치 */
+        }
+
+        #playlistSelect:hover {
+            border-color: #31d2f2; /* 마우스 오버 시 테두리 색상 변화 */
+        }
+
+        #playlistSelect:focus {
+            outline: none; /* 포커스 아웃라인 제거 */
+            border-color: #31d2f2; /* 포커스 시 테두리 색상 변화 */
+            box-shadow: 0 0 5px rgba(49, 210, 242, 0.5); /* 포커스 시 그림자 효과 */
+        }
+
     </style>
     <script>
         let currentSong = {};
@@ -214,7 +241,7 @@
                 })
                     .then(response => {
                         if (!response.ok) {
-                            return response.json().then(errorData  => {
+                            return response.json().then(errorData => {
                                 throw new Error(errorData.message || "오류가 발생했습니다.");
                             });
                         }
@@ -297,19 +324,6 @@
             </div>
         </div>
 
-        <!-- 플레이리스트 선택 -->
-        <div>
-            <label for="playlistSelect">플레이리스트 선택:</label>
-            <select id="playlistSelect">
-                {% if playlists %}
-                    {% for playlist in playlists %}
-                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
-                    {% endfor %}
-                {% else %}
-                    <option value="">플레이리스트가 없습니다.</option>
-                {% endif %}
-            </select>
-        </div>
 
         <!-- 버튼 섹션 -->
         <section class="btns">
@@ -329,11 +343,36 @@
                  <i class="fas fa-trash"></i>
                  <span>삭제</span>
             </span>
-            {#            <a href="{% url 'playlist:view_playlist' playlist.id %}" class="btns__btn"#}
-            {#               style="text-decoration: none; color: #ffffff;">#}
-            {#                <i class="fas fa-eye"></i>#}
-            {#                <span>플레이리스트 보기</span>#}
-            {#            </a>#}
+        </section>
+        <!-- 플레이리스트 선택 -->
+        <div>
+            <label for="playlistSelect"></label>
+            <select id="playlistSelect">
+                {% if playlists %}
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">플레이리스트가 없습니다.</option>
+                {% endif %}
+            </select>
+        </div>
+        <!-- 플레이리스트 보기 버튼 -->
+        <section class="btns">
+            {% if playlists %}
+                {% for playlist in playlists %}
+                    <a href="{% url 'playlist:view_playlist' playlist.id %}" class="btns__btn"
+                       style="text-decoration: none; color: #ffffff;">
+                        <i class="fas fa-eye"></i>
+                        <span>{{ playlist.name }}</span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <span class="btns__btn" style="cursor: default; opacity: 0.5;">
+            <i class="fas fa-eye"></i>
+            <span>플레이리스트가 없습니다.</span>
+        </span>
+            {% endif %}
         </section>
 
         <!-- 노래 리스트 -->

@@ -12,7 +12,7 @@ def create_playlist(request):
     # 예시로 첫 번째 Song 객체를 가져온다고 가정
     songs = Song.objects.all()  # 실제 로직에 맞게 수정
     playlists = Playlist.objects.filter(
-        user=request.user
+        user=request.user.id
     )  # 로그인한 유저의 플레이리스트만
     return render(
         request,
