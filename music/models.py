@@ -1,26 +1,36 @@
 from __future__ import annotations
-
 from datetime import date
+
 from typing import Dict
 from urllib.parse import quote
 
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 
 # models.Model 상속
 class Song(models.Model):
-    melon_uid = models.CharField(max_length=20, unique=True)
-    rank = models.PositiveSmallIntegerField()
+    melon_uid = models.CharField(max_length=20, unique=False)
+    rank = models.PositiveSmallIntegerField(default=0)
     album_name = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     artist_name = models.CharField(max_length=100)
     cover_url = models.URLField()
     lyrics = models.TextField()
     genre = models.CharField(max_length=100)
-    release_date = models.DateField()
-    like_count = models.PositiveIntegerField()
+    release_date = models.DateField(default=timezone.now)
+    like_count = models.PositiveIntegerField(default=0)
+
+    # AI 자작곡 관련 필드 추가
+    is_ai_generated = models.BooleanField(default=False)  # AI로 만든 곡 여부
+    song_file = models.FileField(
+        upload_to="songs/", blank=True, null=True
+    )  # 파일 업로드 필드
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
+    )  # 곡 소유자
 
     @property
     def melon_detail_url(self) -> str:
@@ -51,16 +61,16 @@ class Song(models.Model):
 User = get_user_model()  # 현재 사용 중인 사용자 모델 가져오기
 
 
-class Playlist(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="playlists",
-    )  # 변경된 related_name
-    name = models.CharField(max_length=100)
-    songs = models.ManyToManyField(
-        "Song", related_name="playlist_songs"
-    )  # 변경된 related_name
-
-    def __str__(self):
-        return self.name
+# class Playlist(models.Model):
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#         related_name="playlists",
+#     )  # 변경된 related_name
+#     name = models.CharField(max_length=100)
+#     songs = models.ManyToManyField(
+#         "Song", related_name="playlist_songs"
+#     )  # 변경된 related_name
+#
+#     def __str__(self):
+#         return self.name
