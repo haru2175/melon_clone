@@ -185,13 +185,21 @@
             {% for song in playlist.songs.all %}
                 <li class="song-list__song" onclick="showSongInfo({
                         id: '{{ song.id }}',
-                        cover_url: '{{ song.cover_url|escapejs }}',
+                        cover_url: '
+                        {% if song.cover_url %}{{ song.cover_url|escapejs }}{% else %}{{ song.song_file.url|default:''|escapejs }}{% endif %}',
                         name: '{{ song.name|escapejs }}',
                         artist_name: '{{ song.artist_name|escapejs }}'
                         }, this)">
                     <div class="song-list__cover">
-                        <img src="{{ song.cover_url }}" alt="{{ song.name }}"
-                             style="width: 100%; height: 100%; object-fit: cover;"/>
+                        {% if song.cover_url %}
+                            <img src="{{ song.cover_url }}" alt="{{ song.name }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;"/>
+                        {% elif song.song_file %}
+                            <img src="{{ song.song_file.url }}" alt="{{ song.name }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;"/>
+                        {% else %}
+                            <p style="text-align: center;">이미지 파일이 없습니다.</p>
+                        {% endif %}
                     </div>
                     <div class="song-list__data">
                         <h5>{{ song.name }}</h5>

@@ -389,14 +389,25 @@
                         name: '{{ song.name|escapejs }}',
                         artist_name: '{{ song.artist_name|escapejs }}'
                         }, this)">
-                    <div class="song-list__cover">
-                        <img src="{{ song.cover_url }}" alt="{{ song.name }}"
-                             style="width: 100%; height: 100%; object-fit: cover;"/>
+                      <div class="song-list__cover">
+                        {% if song.cover_url %}
+                            <img src="{{ song.cover_url }}" alt="{{ song.name }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;"/>
+                        {% elif song.song_file %}
+                            <img src="{{ song.song_file.url }}" alt="{{ song.name }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;"/>
+                        {% else %}
+                            <p style="text-align: center;">이미지 파일이 없습니다.</p>
+                        {% endif %}
                     </div>
                     <div class="song-list__data">
                         <h5>{{ song.name }}</h5>
                         <h6>{{ song.artist_name }}</h6>
                     </div>
+                    <button onclick="removeSongFromPlaylist('{{ playlist_id }}')"
+                            style="background: none; border: none; color: red; cursor: pointer;">
+                        <i class="fas fa-times"></i> <!-- Font Awesome X 아이콘 -->
+                    </button>
                 </li>
             {% endfor %}
         </ul>
