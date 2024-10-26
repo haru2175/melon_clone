@@ -1,0 +1,7 @@
+# Git LFS 설치 (설치 방법은 운영체제에 따라 다를 수 있습니다)
+git lfs install
+
+# 특정 파일 확장자를 Git LFS로 추적
+git lfs track "*.psd"  # 예시: PSD 파일
+
+# .gitattributes 파일에 자동으로 추가됨
