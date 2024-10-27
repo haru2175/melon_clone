@@ -30,7 +30,7 @@ class IndexView(ListView):
                 | Q(album_name__icontains=query)
             )
 
-        return qs
+        return qs.order_by("id")
 
 
 index = IndexView.as_view()
@@ -49,8 +49,10 @@ def upload_song(request):
             song.save()
 
             # 업로드한 이미지 파일을 저장
-            if request.FILES.get('cover_image'):
-                song.cover_image = request.FILES['cover_image']  # 이미지 필드에 파일 저장
+            if request.FILES.get("cover_image"):
+                song.cover_image = request.FILES[
+                    "cover_image"
+                ]  # 이미지 필드에 파일 저장
 
             # 선택된 플레이리스트에 곡 추가
             selected_playlist = form.cleaned_data[

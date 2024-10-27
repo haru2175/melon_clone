@@ -202,3 +202,6 @@ INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Login redirect URL
+LOGIN_REDIRECT_URL = '/'  # 원하는 URL로 수정 (예: 홈 페이지)

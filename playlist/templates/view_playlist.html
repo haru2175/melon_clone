@@ -185,8 +185,7 @@
             {% for song in playlist.songs.all %}
                 <li class="song-list__song" onclick="showSongInfo({
                         id: '{{ song.id }}',
-                        cover_url: '
-                        {% if song.cover_url %}{{ song.cover_url|escapejs }}{% else %}{{ song.song_file.url|default:''|escapejs }}{% endif %}',
+                        cover_url: '{% if song.cover_url %}{{ song.cover_url|escapejs }}{% else %}{{ song.song_file.url|default:''|escapejs }}{% endif %}',
                         name: '{{ song.name|escapejs }}',
                         artist_name: '{{ song.artist_name|escapejs }}'
                         }, this)">

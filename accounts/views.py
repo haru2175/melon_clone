@@ -10,6 +10,7 @@ from django.views.generic import CreateView, UpdateView
 
 from accounts.forms import LoginForm, SignupForm
 from accounts.models import User
+from music.models import Song
 
 
 def is_authenticated(request):
@@ -61,8 +62,8 @@ class LoginView(DjangoLoginView):
 
     def form_valid(self, form):
         # 사용자 인증에 성공하면 메시지를 추가합니다.
-        messages.success(self.request, "로그인이 되었습니다.")
         response = super().form_valid(form)
+        messages.success(self.request, "로그인이 되었습니다.")
 
         # 쿠키 생성
         response.set_cookie(

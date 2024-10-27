@@ -1,20 +1,58 @@
+<style>
+    .page-link {
+        position: relative;
+        display: inline-block;
+        color: #007dff;
+        border-radius: 24px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 8px 16px;
+        margin: 0 10px; /* 좌우 여백을 통합 */
+        transition: background-color 0.3s, color 0.3s; /* 부드러운 전환 효과 */
+    }
+
+    .page-link:hover {
+        z-index: 2;
+        color: white;
+        background-color: #ff0000; /* hover 시 배경색 */
+    }
+
+    .current {
+        z-index: 3;
+        color: #fff;
+        background-color: #007fff; /* 현재 페이지의 배경색 */
+        padding: 8px 16px; /* 동일한 패딩 적용 */
+        border-radius: 24px; /* 동일한 테두리 반경 */
+    }
+
+    .disabled {
+        color: #ffffff; /* 비활성화된 링크의 색상 */
+        pointer-events: none; /* 클릭 비활성화 */
+    }
+</style>
+
 <div class="pagination">
     <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; 처음으로</a>
-            <a href="?page={{ page_obj.previous_page_number }}">이전페이지</a>
+        <!-- '처음으로'와 '이전페이지' 버튼: 첫 페이지가 아닐 때만 표시 -->
+        {% if page_obj.number > 1 %}
+            <a class="page-link" href="?page=1">&laquo;</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&#60;</a>
         {% endif %}
 
-        <span class="current">
-            현재 {{ page_obj.number }}페이지 (전체: {{ page_obj.paginator.num_pages }})
-        </span>
+        <!-- 페이지 번호 버튼 -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <span class="current">{{ num }}</span> <!-- 현재 페이지 -->
+            {% else %}
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a> <!-- 다른 페이지 -->
+            {% endif %}
+        {% endfor %}
 
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">다음페이지</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">마지막으로</a>
+        <!-- '다음페이지'와 '마지막으로' 버튼: 마지막 페이지가 아닐 때만 표시 -->
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">&#62;</a>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
         {% endif %}
     </span>
 </div>
-
-{# 참고: django-bootstarp5의 bootstrap_pagination 템플릿 태그 #}
-{# https://django-bootstrap5.readthedocs.io/en/stable/templatetags.html#bootstrap-pagination #}
