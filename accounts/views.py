@@ -6,11 +6,10 @@ from django.contrib.auth.views import LoginView as DjangoLoginView, RedirectURLM
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView
 
 from accounts.forms import LoginForm, SignupForm
 from accounts.models import User
-from music.models import Song
 
 
 def is_authenticated(request):
@@ -63,7 +62,6 @@ class LoginView(DjangoLoginView):
     def form_valid(self, form):
         # 사용자 인증에 성공하면 메시지를 추가합니다.
         response = super().form_valid(form)
-        messages.success(self.request, "로그인이 되었습니다.")
 
         # 쿠키 생성
         response.set_cookie(
@@ -81,7 +79,6 @@ class LogoutView(DjangoLogoutView):
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
-        messages.success(request, "로그아웃 했습니다.")
 
         # 쿠키 삭제
         response.delete_cookie("login_success")

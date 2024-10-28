@@ -95,6 +95,13 @@
             box-shadow: 0 0 5px rgba(49, 210, 242, 0.5);
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+        });
+    </script>
 </head>
 <body>
 <div class="wrapper">
@@ -115,7 +122,6 @@
             <label for="{{ form.genre.id_for_label }}">장르</label>
             {{ form.genre }}  <!-- 장르 필드 -->
         </div>
-
         <div class="form-group">
             <label for="{{ form.file.id_for_label }}">이미지 파일</label>
             {{ form.song_file }}  <!-- 파일 업로드 필드 -->

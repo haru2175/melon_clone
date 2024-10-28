@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "accounts",
     "music",
     "playlist",
+    "community",
 ]
 
 if DEBUG:
@@ -204,4 +205,4 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Login redirect URL
-LOGIN_REDIRECT_URL = '/'  # 원하는 URL로 수정 (예: 홈 페이지)
+LOGIN_REDIRECT_URL = "/"  # 원하는 URL로 수정 (예: 홈 페이지)

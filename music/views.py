@@ -1,13 +1,14 @@
 import json
-from django.utils import timezone
 
+from django.utils import timezone
+from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
 from music.froms import SongUploadForm
 from music.models import Song
-from playlist.models import Playlist
+
 
 
 class IndexView(ListView):
@@ -40,6 +41,16 @@ def upload_song(request):
     if request.method == "POST" and request.user.is_authenticated:
         form = SongUploadForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
+            # 파일 확장자 검증
+            song_file = request.FILES.get("song_file")
+            if song_file:
+                allowed_extensions = ['jpg','png']
+                file_extension = song_file.name.split('.')[-1].lower()
+
+                if file_extension not in allowed_extensions:
+                    # 확장자가 허용되지 않으면 오류 메시지 반환
+                    messages.error(request, "이미지 파일 형식이 아닙니다. .jpg 또는 .png 파일만 업로드해주세요.")
+                    return redirect("music:upload_song")
 
             song = form.save(commit=False)
             song.artist_name = request.user.username  # 곡 소유자 설정
@@ -48,11 +59,7 @@ def upload_song(request):
             song.owner = request.user  # 곡의 소유자를 현재 로그인한 사용자로 설정
             song.save()
 
-            # 업로드한 이미지 파일을 저장
-            if request.FILES.get("cover_image"):
-                song.cover_image = request.FILES[
-                    "cover_image"
-                ]  # 이미지 필드에 파일 저장
+
 
             # 선택된 플레이리스트에 곡 추가
             selected_playlist = form.cleaned_data[
