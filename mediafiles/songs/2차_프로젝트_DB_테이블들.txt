@@ -1,0 +1,66 @@
+1.music_song: 곡에 대한 정보를 저장하는 테이블.
+
+2.music_playlist: 곡 목록(플레이리스트) 정보를 저장하는 테이블.
+
+3.music_playlist_songs: 플레이리스트와 곡 간의 관계를 나타내는 테이블 (다대다 관계).
+
+4.playlist_playlist: 사용자 정의 플레이리스트에 대한 정보.
+
+5.playlist_playlist_songs: 사용자 정의 플레이리스트와 곡 간의 관계를 나타내는 테이블 (다대다 관계).
+
+6.playlist_song: 사용자가 추가한 곡 정보를 저장하는 테이블.
+
+플레이리스트 구성
+
+기본 노래 리스트 HTML 단이 있고
+그 안에 플레이리스트 선택: 1,2,3 가 있다는 과정
+한 유저가 본인만의 플레이리스트르 만드는데
+1번째는 일상 감성
+2번째는 퇴근 감성
+3번째는 출근 감성
+등등 있다고 치고
+
+노래 리스트에서 노래를 선택한다음 1번째 리스트에 담으면 DB에 그 데이터들이 들어가면 된다.
+
+그리고 추후 플레이 리스트 html을 구성하여 해당 html에 1번째 플레이리스트에 담은 곡들이 나오게 된다.
+==========================================================================
+2번째
+
+DB 모델
+class Song(models.Model):
+    melon_uid = models.CharField(max_length=100, unique=True, blank=True, null=True)  # Melon 고유 ID는 Melon 곡만 필요, AI 곡은 없어도 됨
+    name = models.CharField(max_length=255)
+    artist_name = models.CharField(max_length=255)
+    album_name = models.CharField(max_length=255, blank=True, null=True)  # AI 곡은 앨범명이 없을 수 있음
+    cover_url = models.URLField(max_length=500, blank=True, null=True)  # AI 곡은 커버 이미지가 없을 수 있음
+    lyrics = models.TextField(blank=True, null=True)  # 가사 정보
+    genre = models.CharField(max_length=100)  # 장르
+    release_date = models.DateField(blank=True, null=True)  # AI 곡의 경우 발매일이 없을 수도 있음
+    like_count = models.IntegerField(default=0)  # 좋아요 수
+    is_ai_generated = models.BooleanField(default=False)  # AI 곡 여부 구분
+    # 추가적으로 AI 곡에 필요한 필드가 있으면 여기에 추가
+
+아직까지는 멜론에 관한 모델로 구성 되어 있지만 Suno에서 본인이 자작한곡을 본인의 플레이리스트에 담아야한다. 
+
+전체적인 흐름:
+
+로그인 → 2. Suno 곡 파일 업로드 → 3. 곡 정보 저장 → 4. 플레이리스트에 추가 → 5. 플레이리스트에서 곡 관리
+
+이를 통해 AI로 제작된 곡과 일반 대중가요를 같은 플랫폼에서 저장하고 관리하며, 사용자 자신만의 플레이리스트에 통합해 감상할 수 있는 완성된 음악 플랫폼을 구축하는 것입니다.
+
+(현재까지는 멜론 노래 리스트만 되어 있다.)
+
+궁금한점 : DB 컬럼들의 데이터를 임의로 넣었는데 이 데이터들을 다 json 형식으로 만들어야 할까요?
+유저들이 본인만의 플레이 리스트를 추가하게되면 해당 곡들에 해당 DB 테이블에 데이터들이 저장되는 방식으로 하고싶은데
+( 예시  music_song 데이터를 참고하면서 보여드리자.)
+또한 아직까지 ERD를 짠건 아닙니다. 너무 초보 개발자이다보니 공부하면서 어떤 형태로 모델링 해야할지 몰라서 구성을 못 했습니다. 그래서 다 만들고 ERD틀을 짜려고 하는데 이 방법도 괜찮은 방법일까요? 아니면 지금이라도 각 models.py에 모델링한것들을 ERD로 구성해둬야할까요?
+
+
+결론: 노래 리스트에 멜론 곡들(Json형식으로 데이터가져온것), 여기에 수노로 만든 자작곡들을 어떤 유저가 추가적으로 넣어서
+본인만의 SUNO(AI) + 멜론 뮤직 플레이 리스트를 구성 하는게 목표 !
+
+
+
+
+
+ 

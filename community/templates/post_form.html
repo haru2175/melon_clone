@@ -1,0 +1,146 @@
+{% load django_bootstrap5 %}
+
+<!doctype html>
+<html lang="ko" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>HotTrack</title>
+
+    {# https://cdnjs.com/libraries/bootstrap #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+
+{# ref: https://getbootstrap.com/docs/5.3/examples/album/ #}
+
+<header data-bs-theme="dark">
+    <div class="collapse text-bg-dark" id="navbarHeader">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-7 py-4">
+                    <h4>About</h4>
+                    <p class="text-body-secondary">Add some information about the album below, the author, or any other
+                        background context. Make it a few sentences long so folks can pick up some informative tidbits.
+                        Then, link them off to some social networking sites or contact information.</p>
+                </div>
+                <div class="col-sm-4 offset-md-1 py-4">
+                    <h4>Contact</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Follow on Twitter</a></li>
+                        <li><a href="#" class="text-white">Like on Facebook</a></li>
+                        <li><a href="#" class="text-white">Email me</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <a href="{% url 'music:root' %}" class="navbar-brand d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                         stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2"
+                         viewBox="0 0 24 24">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <strong>Home</strong>
+                </a>
+                <a href="{% url 'music:index' %}" class="navbar-brand d-flex align-items-center ms-3">
+                    <strong>인기차트</strong>
+                </a>
+                <a href="{% url 'playlist:create_playlist' %}" class="navbar-brand d-flex align-items-center ms-3">
+                    <strong>
+                        노래 리스트</strong>
+                </a>
+                <a href="{% url 'community:post_list' %}" class="navbar-brand d-flex align-items-center ms-3">
+                    <strong>게시판</strong>
+                </a>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="text-end">
+                    {% if not user.is_authenticated %}
+                        {% url 'accounts:login' as login_url %}
+                        <a href="{{ login_url }}{% if login_url != request.path %}?next={{ request.path }}{% endif %}"
+                           class="btn btn-outline-light me-3">로그인</a>
+                        <a href="{% url 'accounts:signup' %}?next={{ request.path }}"
+                           class="btn btn-outline-light me-3">회원가입</a>
+                    {% else %}
+                        <a href="{% url 'accounts:logout' %}?next={{ request.path }}"
+                           hx-target="body"
+                           hx-push-url="true"
+                           class="btn btn-outline-light me-3">로그아웃</a>
+                    {% endif %}
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
+                        aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+<style>
+    .form-label {
+        font-weight: bold; /* 레이블을 굵게 */
+    }
+    .form-control {
+        border-radius: 0.5rem; /* 모서리 둥글게 */
+        border: 1px solid #007bff; /* 테두리 색상 */
+    }
+    .form-control:focus {
+        border-color: #0056b3; /* 포커스 시 테두리 색상 */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 포커스 시 그림자 효과 */
+    }
+</style>
+
+<div class="container mt-4">
+    <h1>{% if post %}게시물 수정{% else %}게시물 작성{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {% if field.name == 'title' %}
+                       ★ 제목
+                    {% elif field.name == 'content' %}
+                       ★ 내용
+                    {% else %}
+                        {{ field.label }}  {# 기본 레이블 사용 #}
+                    {% endif %}
+                </label>
+
+                {% if field.name == 'content' %}
+                    <!-- 내용 입력을 위한 textarea -->
+                    <textarea id="{{ field.id_for_label }}" class="form-control" name="{{ field.name }}" rows="5" required>
+                        {% if field.value %}{{ field.value }}{% endif %}
+                    </textarea>
+                {% else %}
+                    <!-- 제목 입력을 위한 input -->
+                    <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}" class="form-control" name="{{ field.name }}" value="{% if field.value %}{{ field.value }}{% endif %}" required>
+                {% endif %}
+
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">
+            {% if post %}수정하기{% else %}작성하기{% endif %}
+        </button>
+    </form>
+</div>
+
+
+</body>
+</html>
