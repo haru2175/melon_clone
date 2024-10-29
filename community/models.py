@@ -32,14 +32,3 @@ class Comment(models.Model):
     def __str__(self):
         # 댓글 작성자와 게시물 제목을 포함한 문자열 반환
         return f"Comment by {self.author} on {self.post}"
-
-
-class PostLike(models.Model):
-    # 좋아요를 누른 게시물과 연결 (외래 키)
-    post = models.ForeignKey(Post, related_name="likes", on_delete=models.CASCADE)
-    # 좋아요를 누른 사용자: User 모델과 연결 (외래 키)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    class Meta:
-        # 같은 게시물에 같은 사용자가 좋아요를 여러 번 누르지 못하도록 제한
-        unique_together = ("post", "user")

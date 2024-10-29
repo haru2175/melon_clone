@@ -25,11 +25,6 @@
         padding: 8px 16px; /* 동일한 패딩 적용 */
         border-radius: 24px; /* 동일한 테두리 반경 */
     }
-
-    .disabled {
-        color: #ffffff; /* 비활성화된 링크의 색상 */
-        pointer-events: none; /* 클릭 비활성화 */
-    }
 </style>
 
 <div class="pagination">
@@ -41,7 +36,7 @@
         {% endif %}
 
         <!-- 페이지 번호 버튼 -->
-        {% for num in page_obj.paginator.page_range %}
+        {% for num in page_range %}
             {% if num == page_obj.number %}
                 <span class="current">{{ num }}</span> <!-- 현재 페이지 -->
             {% else %}

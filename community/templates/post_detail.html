@@ -91,13 +91,16 @@
         font-weight: bold; /* 제목 굵게 */
         margin-bottom: 1rem; /* 아래 여백 */
     }
+
     .post-meta {
         color: #6c757d; /* 작성자 및 날짜 색상 */
         margin-bottom: 1rem; /* 아래 여백 */
     }
+
     .btn {
         border-radius: 0.5rem; /* 버튼 모서리 둥글게 */
     }
+
     .comment-item {
         padding: 10px; /* 댓글 여백 */
     }
@@ -119,21 +122,32 @@
     <h2 class="mt-4">댓글</h2>
     <ul class="list-group">
         {% for comment in post.comments.all %}
-            <li class="list-group-item comment-item">
-                {{ comment.content }} - <small>{{ comment.created_at }}</small>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- 댓글 내용 -->
+                <span>
+                {{ comment.content }}
+            </span>
+                <!-- 작성자와 삭제 버튼 -->
+                <span class="d-flex align-items-center">
+                <small class="text-muted m-lg-1">작성자 : {{ comment.author }}　</small>
+                    {% if comment.author == user %} <!-- 현재 사용자와 댓글 작성자가 같을 때만 삭제 버튼 표시 -->
+                         <form method="post" action="{% url 'community:comment_delete' post.id comment.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm ml-2">삭제</button>
+                    </form>
+                    {% endif %}
+            </span>
             </li>
         {% endfor %}
     </ul>
 
     <h3 class="mt-4">댓글 작성</h3>
-    <form method="post" action="{% url 'community:post_create' %}">
+    <form method="post" action="{% url 'community:post_comment' post.id %}">
         {% csrf_token %}
         <div class="form-group">
             <textarea name="content" class="form-control" rows="3" required placeholder="댓글을 입력하세요."></textarea>
         </div>
         <button type="submit" class="btn btn-success mt-2">댓글 작성</button>
     </form>
-</div>
-
 </body>
 </html>
