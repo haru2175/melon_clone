@@ -21,7 +21,9 @@ class Song(models.Model):
     lyrics = models.TextField()
     genre = models.CharField(max_length=100)
     release_date = models.DateField(default=timezone.now)
-    like_count = models.PositiveIntegerField(default=0)
+    like_count = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="like_count", blank=True
+    )
 
     # AI 자작곡 관련 필드 추가
     is_ai_generated = models.BooleanField(default=False)  # AI로 만든 곡 여부
@@ -54,23 +56,11 @@ class Song(models.Model):
             lyrics=data.get("lyrics"),
             genre=data.get("장르"),
             release_date=date.fromisoformat(data.get("발매일")),
-            like_count=int(data.get("좋아요")),
         )
+
+    def like_count_display(self):
+        """좋아요 수를 반환합니다."""
+        return self.like_count.count()
 
 
 User = get_user_model()  # 현재 사용 중인 사용자 모델 가져오기
-
-
-# class Playlist(models.Model):
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#         related_name="playlists",
-#     )  # 변경된 related_name
-#     name = models.CharField(max_length=100)
-#     songs = models.ManyToManyField(
-#         "Song", related_name="playlist_songs"
-#     )  # 변경된 related_name
-#
-#     def __str__(self):
-#         return self.name

@@ -18,7 +18,7 @@ class SongAdmin(admin.ModelAdmin):
         "artist_name",
         "album_name",
         "genre",
-        "like_count",
+        "like_count_display",
         "release_date",
     ]
     list_filter = ["genre", "release_date"]

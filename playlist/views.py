@@ -1,10 +1,13 @@
 import json
 
+from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from music.models import Song
 from .models import Playlist
+from music.froms import SongUploadForm
 
 
 @login_required
@@ -96,9 +99,19 @@ def like_song(request):
         song_id = data.get("song_id")
         song = get_object_or_404(Song, id=song_id)
 
-        song.like_count += 1  # 좋아요 수 증가
-        song.save()
-        return JsonResponse({"status": "success", "like_count": song.like_count})
+        if request.user in song.like_count.all():
+            return JsonResponse(
+                {"status": "failed", "message": "이미 좋아요를 눌렀습니다."}, status=400
+            )
+
+        # 사용자를 좋아요 목록에 추가
+        song.like_count.add(request.user)
+
+        # 좋아요 수 반환
+        like_count = song.like_count.count()
+
+        return JsonResponse({"status": "success", "like_count": like_count})
+
     return JsonResponse({"status": "failed"}, status=400)
 
 
@@ -106,16 +119,42 @@ def like_song(request):
 @login_required
 def view_playlist(request, playlist_id):
     playlist = get_object_or_404(Playlist, id=playlist_id, user=request.user)
-    songs = playlist.songs.all()
+    # songs = playlist.songs.all()
     return render(request, "view_playlist.html", {"playlist": playlist})
 
 
-# def playlist_view(request):
-#     if request.user.is_authenticated:  # 유저가 로그인했는지 확인
-#         playlists = Playlist.objects.filter(
-#             user=request.user
-#         )  # 로그인한 유저의 플레이리스트만 가져오기
-#     else:
-#         playlists = None  # 로그인하지 않았다면 아무 플레이리스트도 없음
-#
-#     return render(request, "create_playlist.html", {"playlists": playlists})
+def upload_song(request):
+    if request.method == "POST" and request.user.is_authenticated:
+        form = SongUploadForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            # 파일 확장자 검증
+            song_file = request.FILES.get("song_file")
+            if song_file:
+                allowed_extensions = ["jpg", "png"]
+                file_extension = song_file.name.split(".")[-1].lower()
+
+                if file_extension not in allowed_extensions:
+                    # 확장자가 허용되지 않으면 오류 메시지 반환
+                    messages.error(
+                        request,
+                        "이미지 파일 형식이 아닙니다. .jpg 또는 .png 파일만 업로드해주세요.",
+                    )
+                    return redirect("music:upload_song")
+
+            song = form.save(commit=False)
+            song.artist_name = request.user.username  # 곡 소유자 설정
+            song.release_date = timezone.now()  # 현재 날짜 및 시간
+            song.is_ai_generated = True  # AI로 만든 곡으로 표시
+            song.owner = request.user  # 곡의 소유자를 현재 로그인한 사용자로 설정
+            song.save()
+
+            # 선택된 플레이리스트에 곡 추가
+            selected_playlist = form.cleaned_data[
+                "playlist"
+            ]  # 선택된 플레이리스트 가져오기
+            selected_playlist.songs.add(song)  # 곡을 선택된 플레이리스트에 추가
+
+            return redirect("playlist:create_playlist")  # 저장 후 리디렉션
+    else:
+        form = SongUploadForm(user=request.user)
+    return render(request, "upload_song.html", {"form": form})

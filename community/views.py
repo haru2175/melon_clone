@@ -10,7 +10,6 @@ from .models import Post, Comment
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-from django.core.paginator import Paginator
 
 
 class PostListView(ListView):

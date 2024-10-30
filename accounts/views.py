@@ -1,5 +1,3 @@
-from http.client import responses
-
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView as DjangoLoginView, RedirectURLMixin

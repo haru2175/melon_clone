@@ -32,27 +32,6 @@
             color: #e0e0e0; /* 제목 색상을 연한 회색으로 설정 */
         }
 
-        .main-song {
-            display: flex; /* Flexbox를 사용하여 수평 정렬 */
-            align-items: center; /* 아이템을 수직으로 중앙 정렬 */
-            margin: 20px 0; /* 위아래 마진을 20px로 설정 */
-        }
-
-        .main-song__cover {
-            width: 75px; /* 커버 이미지의 너비 설정 */
-            height: 75px; /* 커버 이미지의 높이 설정 */
-            background-color: #333; /* 커버의 배경색을 어두운 회색으로 설정 */
-            display: flex; /* Flexbox 사용 */
-            justify-content: center; /* 중앙 정렬 */
-            align-items: center; /* 수직 중앙 정렬 */
-            border-radius: 10px; /* 모서리를 둥글게 설정 */
-            margin-right: 20px; /* 오른쪽 마진 20px 추가 */
-        }
-
-        .main-song__data {
-            flex-grow: 1; /* 남은 공간을 채우도록 설정 */
-        }
-
         .btns {
             margin: 20px 0; /* 위아래 마진 20px 추가 */
             display: flex; /* Flexbox 사용 */
@@ -116,6 +95,19 @@
             background-color: #31d2f2; /* 활성화된 노래의 배경색 설정 */
         }
 
+        #back-to-top {
+            position: fixed; /* 고정 위치 */
+            bottom: 20px; /* 아래쪽 여백 */
+            right: 20px; /* 오른쪽 여백 */
+            background-color: #007bff; /* 버튼 배경색 */
+            color: white; /* 글자색 */
+            border: none; /* 테두리 없음 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            padding: 10px 15px; /* 패딩 */
+            cursor: pointer; /* 커서 모양 변경 */
+            z-index: 1000; /* 다른 요소 위에 나타나도록 */
+        }
+
         /* 플레이리스트 선택 창 스타일 */
         #playlistSelect {
             width: 100%; /* 전체 폭 사용 */
@@ -156,7 +148,7 @@
             const selectedTitle = selectedSongDiv.querySelector('.selected-song__title');
             const selectedArtist = selectedSongDiv.querySelector('.selected-song__artist');
 
-            selectedCover.src = song.cover_url||song.song_file;
+            selectedCover.src = song.cover_url || song.song_file;
             selectedTitle.textContent = song.name;
             selectedArtist.textContent = song.artist_name;
 
@@ -278,7 +270,7 @@
                         if (data.status === 'success') {
                             alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
                         } else {
-                            alert("좋아요 기능에 실패했습니다!");
+                            alert("이미 좋아요♥ 를 눌렀습니다.");
                         }
                     })
                     .catch(error => console.error('Error:', error));
@@ -342,7 +334,7 @@
                  <i class="fas fa-trash"></i>
                  <span>삭제</span>
             </span>
-            <span class="btns__btn" onclick="location.href='{% url 'music:upload_song' %}'">
+            <span class="btns__btn" onclick="location.href='{% url 'playlist:upload_song' %}'">
                  <i class="fas fa-trash"></i>
                  <span>자작곡 추가하기</span>
             </span>
@@ -408,6 +400,35 @@
             {% endfor %}
         </ul>
     </main>
+    <footer class="text-body-secondary py-5">
+        <div class="container">
+            <p class="float-end mb-1"></p>
+            <p class="mb-1">　　　　　　　　　　　　　　　　　　　　</p>
+            <p class="mb-0">　　　　　　　　　　　　　　　　©　인가차트 TOP 100 & Snuo 자작곡
+                <button id="back-to-top" style="display: none;">↑ 위로 가기</button>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 페이지가 스크롤될 때
+        window.onscroll = function () {
+            const button = document.getElementById("back-to-top");
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                button.style.display = "block"; // 버튼 표시
+            } else {
+                button.style.display = "none"; // 버튼 숨김
+            }
+        };
+
+        // 버튼 클릭 시 위로 스크롤
+        document.getElementById("back-to-top").onclick = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth" // 부드럽게 스크롤
+            });
+        };
+    </script>
 </div>
 </body>
 </html>

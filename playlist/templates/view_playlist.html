@@ -141,7 +141,7 @@
                         if (data.status === 'success') {
                             alert(currentSong.name + " 곡에 좋아요♥ 를 눌렀습니다. 현재 좋아요 수: " + data.like_count);
                         } else {
-                            alert("좋아요 기능에 실패했습니다!");
+                            alert("이미 좋아요♥ 를 눌렀습니다.");
                         }
                     })
                     .catch(error => console.error('Error:', error));

@@ -11,7 +11,6 @@ app_name = "music"
 urlpatterns = [
     path("", TemplateView.as_view(template_name="root.html"), name="root"),  # 기본 루트
     path("index/", views.index, name="index"),  # '/index/' 경로에 index 뷰를 연결
-    path("upload_song/", views.upload_song, name="upload_song"),
 ]
 
 # MEDIA_URL 경로 설정 추가

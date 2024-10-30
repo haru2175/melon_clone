@@ -14,4 +14,5 @@ urlpatterns = [
     ),
     path("view/<int:playlist_id>/", views.view_playlist, name="view_playlist"),
     path("like_song/", views.like_song, name="like_song"),
+    path("upload_song/", views.upload_song, name="upload_song"),
 ]
