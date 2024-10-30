@@ -139,7 +139,7 @@ def upload_song(request):
                         request,
                         "이미지 파일 형식이 아닙니다. .jpg 또는 .png 파일만 업로드해주세요.",
                     )
-                    return redirect("music:upload_song")
+                    return redirect("playlist:upload_song")
 
             song = form.save(commit=False)
             song.artist_name = request.user.username  # 곡 소유자 설정
