@@ -3,7 +3,6 @@
   <component name="Black">
     <option name="enabledOnReformat" value="true" />
     <option name="enabledOnSave" value="true" />
-    <option name="pathToExecutable" value="C:\Users\ict-04\AppData\Local\Programs\Python\Python311\Scripts\black.exe" />
     <option name="sdkName" value="Python 3.11 (melon_clone)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (melon_clone)" project-jdk-type="Python SDK" />

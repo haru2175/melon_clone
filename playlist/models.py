@@ -15,3 +15,5 @@ class Playlist(models.Model):
 
     def __str__(self):
         return self.name
+
+    # self 인스턴스 변수를 쓰기 위해서 쓰는것.
